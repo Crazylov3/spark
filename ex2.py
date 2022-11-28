@@ -34,40 +34,32 @@ routesSchema = StructType() \
     .add("stops", "integer") \
     .add("equipment", "string")
 
-
 airports = spark.read.csv("data/airports.dat", schema=airportsSchema)
+airports.createOrReplaceTempView("airports")
 airports.show(10)
 
 routes = spark.read.csv("data/routes.dat", schema=routesSchema)
 routes.show(10)
+routes.createOrReplaceTempView("routes")
 
-print("Number of airports: ", airports.count())
+print("Number of airports: ")
+spark.sql("SELECT COUNT(*) FROM airports").show()
 print("_____________________________________________________________")
 print("Number of airports DISTINCT: ")
-airports.select(countDistinct("airport_name")).show()
+spark.sql("SELECT COUNT(DISTINCT airport_name) FROM airports").show()
 print("_____________________________________________________________")
-
 print("Filtering airports in Greenland")
-airports.filter(airports.country == "Greenland").show()
+spark.sql("SELECT * FROM airports WHERE country = 'Greenland'").show()
 print("_____________________________________________________________")
-
 print("Grouping by country and counting")
-groupby_country_airports = (
-    airports
-    .groupBy("country")
-    .agg(count("airport_name").alias("airport_count"))
-    .show(truncate = False)
-)
+spark.sql("SELECT country, COUNT(airport_name) AS airport_count FROM airports GROUP BY country").show(truncate=False)
 print("_____________________________________________________________")
 print("Joining routes and airports")
-routes_join_airports = routes.join(airports, routes.destination_airport_id == airports.id, "left")
-routes_join_airports.show()
-
+spark.sql("SELECT * FROM routes JOIN airports ON routes.source_airport_id = airports.id").show()
 print("_____________________________________________________________")
 print("Count the number of flights arriving in each country")
-airport_counts = (
-    routes_join_airports
-    .groupBy("country")
-    .agg(count("destination_airport").alias("flight_arriving_count"))
-    .show(truncate = False)
-)
+spark.sql(
+    "SELECT country, COUNT(airport_name) AS airport_count "
+    "FROM airports JOIN routes ON airports.id = routes.source_airport_id "
+    "GROUP BY country"
+).show(truncate=False)

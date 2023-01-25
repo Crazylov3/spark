@@ -11,4 +11,9 @@ RUN export JAVA_HOME
 RUN export PYSPARK_SUBMIT_ARGS="--master spark://127.0.0.1:6666"
 RUN pip install py4j
 RUN pip install notebook
+RUN pip install pandas
+RUN pip install numpy
+RUN pip install matplotlib
+RUN #pip install scikit-learn
+RUN pip install seaborn
 ENTRYPOINT [ "/bin/bash" ]

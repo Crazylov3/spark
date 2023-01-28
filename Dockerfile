@@ -14,6 +14,7 @@ RUN pip install notebook
 RUN pip install pandas
 RUN pip install numpy
 RUN pip install matplotlib
-RUN #pip install scikit-learn
+RUN pip install scikit-learn
 RUN pip install seaborn
+RUN echo "spark.sql.autoBroadcastJoinThreshold=-1" >> /opt/bitnami/spark/conf/spark-defaults.conf
 ENTRYPOINT [ "/bin/bash" ]

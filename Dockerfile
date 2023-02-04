@@ -16,5 +16,8 @@ RUN pip install numpy
 RUN pip install matplotlib
 RUN pip install scikit-learn
 RUN pip install seaborn
-RUN echo "spark.sql.autoBroadcastJoinThreshold=-1" >> /opt/bitnami/spark/conf/spark-defaults.conf
+RUN echo "spark.sql.autoBroadcastJoinThreshold=-1" >> /opt/bitnami/spark/conf/spark-defaults.conf.template
+# set java.arg.2=-Xms512m
+RUN echo "spark.driver.memory=10g" >> /opt/bitnami/spark/conf/spark-defaults.conf
+RUN echo "spark.executor.memory=10g" >> /opt/bitnami/spark/conf/spark-defaults.conf.template
 ENTRYPOINT [ "/bin/bash" ]
